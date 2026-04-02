@@ -96,8 +96,7 @@ export async function POST(req: NextRequest) {
           currency: 'usd',
           unit_amount: Math.round(price * 100),
           product_data: {
-            name: `Private Ride — ${ride.ride_date} ${ride.ride_time}`,
-            description: `${ride.pickup_address} → ${ride.dropoff_address}`,
+            name: `Private Ride — ${ride.ride_date} ${ride.ride_time}`,            
           },
         })
         const paymentLink = await stripe.paymentLinks.create({
