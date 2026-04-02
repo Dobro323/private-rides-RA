@@ -91,20 +91,17 @@ export async function POST(req: NextRequest) {
     // Create Stripe payment link if client wants card
     if (ride.payment_method === 'stripe') {
       try {
+        // First create a price object
+        const priceObj = await stripe.prices.create({
+          currency: 'usd',
+          unit_amount: Math.round(price * 100),
+          product_data: {
+            name: `Private Ride — ${ride.ride_date} ${ride.ride_time}`,
+            description: `${ride.pickup_address} → ${ride.dropoff_address}`,
+          },
+        })
         const paymentLink = await stripe.paymentLinks.create({
-          line_items: [
-            {
-              price_data: {
-                currency: 'usd',
-                product_data: {
-                  name: `Private Ride — ${ride.ride_date} ${ride.ride_time}`,
-                  description: `${ride.pickup_address} → ${ride.dropoff_address}`,
-                },
-                unit_amount: Math.round(price * 100),
-              },
-              quantity: 1,
-            },
-          ],
+          line_items: [{ price: priceObj.id, quantity: 1 }],
           metadata: { ride_id: ride.id },
         })
         stripeLink = paymentLink.url
