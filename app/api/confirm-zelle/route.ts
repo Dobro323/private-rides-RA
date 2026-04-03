@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
     time: ride.ride_time,
     price: ride.price_usd,
     driverName: ride.drivers?.name,
+    lang: ride.lang,
   })
 
   // Notify yourself
