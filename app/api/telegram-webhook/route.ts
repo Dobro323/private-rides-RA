@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
     }
     const { data: rides } = await supabase
       .from('rides').select('*')
-      .ilike('id', `${ridePrefix}%`)
+      .filter('id::text', 'ilike', `${ridePrefix}%`)
       .neq('status', 'cancelled')
       .neq('status', 'completed')
       .limit(1)
