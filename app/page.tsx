@@ -23,17 +23,14 @@ export default function Home() {
     e.preventDefault()
     setLoading(true)
     setError('')
-
     const form = e.currentTarget
     const data = Object.fromEntries(new FormData(form))
-
     try {
       const res = await fetch('/api/rides', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, lang }),
       })
-
       if (!res.ok) throw new Error('Failed')
       setSubmitted(true)
     } catch {
@@ -47,15 +44,11 @@ export default function Home() {
     <>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-          --bg: #0e0e0d; --surface: #161614; --border: #2a2a26;
-          --text: #f0ede6; --muted: #7a7770; --accent: #c8a96e; --radius: 4px;
-        }
+        :root { --bg: #0e0e0d; --surface: #161614; --border: #2a2a26; --text: #f0ede6; --muted: #7a7770; --accent: #c8a96e; --radius: 4px; }
         html { scroll-behavior: smooth; }
         body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; line-height: 1.6; overflow-x: hidden; }
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
         body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:1000; opacity:0.4; }
-
         nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:20px 48px; background:rgba(14,14,13,0.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); }
         .nav-logo { font-family:'DM Serif Display',serif; font-size:18px; color:var(--text); text-decoration:none; }
         .lang-switcher { display:flex; gap:4px; }
@@ -64,7 +57,6 @@ export default function Home() {
         .nav-right { display:flex; align-items:center; gap:16px; }
         .nav-cta { background:var(--accent); color:#0e0e0d; font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:9px 20px; border:none; cursor:pointer; text-decoration:none; transition:opacity 0.2s; }
         .nav-cta:hover { opacity:0.85; }
-
         .hero { min-height:100vh; display:grid; place-items:center; padding:120px 48px 80px; position:relative; overflow:hidden; }
         .hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 70% 40%, rgba(200,169,110,0.07) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 70%, rgba(200,169,110,0.04) 0%, transparent 60%); }
         .hero-inner { position:relative; max-width:780px; text-align:center; animation:fadeUp 1s ease both; }
@@ -78,18 +70,15 @@ export default function Home() {
         .btn-primary:hover { opacity:0.9; transform:translateY(-1px); }
         .btn-secondary { background:transparent; color:var(--muted); font-size:13px; padding:16px 36px; border:1px solid var(--border); cursor:pointer; text-decoration:none; display:inline-block; transition:border-color 0.2s, color 0.2s; }
         .btn-secondary:hover { border-color:var(--muted); color:var(--text); }
-
         .perks { border-top:1px solid var(--border); border-bottom:1px solid var(--border); display:grid; grid-template-columns:repeat(4,1fr); }
         .perk { padding:32px 24px; display:flex; align-items:flex-start; gap:16px; border-right:1px solid var(--border); }
         .perk:last-child { border-right:none; }
         .perk-icon { font-size:20px; flex-shrink:0; margin-top:2px; }
         .perk-label { font-size:13px; font-weight:500; margin-bottom:4px; }
         .perk-desc { font-size:12px; color:var(--muted); line-height:1.5; }
-
         section { padding:80px 48px; }
         .section-label { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
         .section-title { font-family:'DM Serif Display',serif; font-size:clamp(28px,4vw,48px); line-height:1.1; margin-bottom:16px; }
-
         .how { background:var(--surface); }
         .how-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
         .how-left p { color:var(--muted); max-width:360px; }
@@ -99,7 +88,6 @@ export default function Home() {
         .step-num { font-family:'DM Serif Display',serif; font-size:32px; color:var(--accent); opacity:0.3; line-height:1; flex-shrink:0; width:44px; }
         .step-title { font-size:14px; font-weight:500; margin-bottom:4px; }
         .step-text { font-size:13px; color:var(--muted); line-height:1.6; }
-
         .booking { background:var(--surface); border-top:1px solid var(--border); }
         .booking-inner { max-width:600px; margin:0 auto; text-align:center; }
         .booking-inner > p { color:var(--muted); margin-bottom:40px; }
@@ -112,28 +100,33 @@ export default function Home() {
         input:focus, textarea:focus, select:focus { border-color:var(--accent); }
         select option { background:#1a1a18; }
         textarea { resize:vertical; min-height:90px; }
+        input[type="date"], input[type="time"] { cursor:pointer; color-scheme:dark; }
+        input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { cursor:pointer; padding:4px; width:20px; height:20px; filter:invert(0.75) sepia(0.5) saturate(2) hue-rotate(10deg); opacity:0.8; }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
         .form-submit { margin-top:6px; background:var(--accent); color:#0e0e0d; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:17px; border:none; cursor:pointer; width:100%; transition:opacity 0.2s; }
         .form-submit:hover:not(:disabled) { opacity:0.9; }
         .form-submit:disabled { opacity:0.5; cursor:not-allowed; }
         .form-note { font-size:12px; color:var(--muted); text-align:center; margin-top:10px; }
-        .form-error { background:#fee2e2; border:1px solid #fca5a5; color:#b91c1c; padding:12px 16px; font-size:13px; border-radius:var(--radius); }
-
+        .form-error { background:#fee2e2; border:1px solid #fca5a5; color:#b91c1c; padding:12px 16px; font-size:13px; }
+        .bug-toggle { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:0; margin-top:16px; display:block; width:100%; text-align:center; }
+        .bug-toggle:hover { color:var(--text); }
+        .bug-box { margin-top:12px; padding:16px; border:1px solid var(--border); background:var(--bg); display:flex; flex-direction:column; gap:10px; }
+        .bug-box textarea { min-height:70px; font-size:13px; }
+        .bug-submit { background:transparent; border:1px solid var(--border); color:var(--muted); font-size:12px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:10px; cursor:pointer; transition:border-color 0.2s, color 0.2s; width:100%; }
+        .bug-submit:hover { border-color:var(--muted); color:var(--text); }
+        .bug-sent { font-size:12px; color:var(--accent); text-align:center; padding:8px 0; margin-top:12px; }
         .success-msg { padding:48px 0; }
         .success-icon { font-size:48px; margin-bottom:16px; }
         .success-msg h3 { font-family:'DM Serif Display',serif; font-size:28px; margin-bottom:8px; }
         .success-msg p { color:var(--muted); }
-
         .long-trip { border:1px solid var(--border); padding:24px 28px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:16px; }
         .long-trip-text { font-size:13px; color:var(--muted); }
         .long-trip-text strong { color:var(--text); display:block; margin-bottom:4px; font-size:14px; }
         .long-trip a { background:transparent; border:1px solid var(--border); color:var(--muted); font-size:12px; padding:9px 18px; text-decoration:none; white-space:nowrap; transition:border-color 0.2s, color 0.2s; }
         .long-trip a:hover { border-color:var(--muted); color:var(--text); }
-
         footer { border-top:1px solid var(--border); padding:28px 48px; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12px; }
         .footer-logo { font-family:'DM Serif Display',serif; font-size:16px; color:var(--text); }
-
         @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
-
         @media (max-width:768px) {
           nav { padding:16px 20px; }
           .hero { padding:100px 20px 60px; }
@@ -161,11 +154,7 @@ export default function Home() {
         <div className="nav-right">
           <div className="lang-switcher">
             {LANGS.map((l) => (
-              <button
-                key={l.code}
-                className={`lang-btn ${lang === l.code ? 'active' : ''}`}
-                onClick={() => setLang(l.code)}
-              >
+              <button key={l.code} className={`lang-btn ${lang === l.code ? 'active' : ''}`} onClick={() => setLang(l.code)}>
                 {l.flag} {l.label}
               </button>
             ))}
@@ -174,7 +163,6 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* HERO */}
       <section className="hero">
         <div className="hero-bg" />
         <div className="hero-inner">
@@ -188,7 +176,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PERKS */}
       <div className="perks">
         {[
           { icon: '🤝', label: t.perk1_label, desc: t.perk1_desc },
@@ -206,7 +193,6 @@ export default function Home() {
         ))}
       </div>
 
-      {/* HOW IT WORKS */}
       <section className="how" id="how">
         <div className="how-grid">
           <div>
@@ -232,7 +218,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BOOKING FORM */}
       <section className="booking" id="book">
         <div className="booking-inner">
           <div className="section-label">{t.form_label}</div>
@@ -276,31 +261,27 @@ export default function Home() {
               <div className="form-row">
                 <div className="field">
                   <label htmlFor="ride_date">{t.field_date}</label>
-                  <input id="ride_date" name="ride_date" type="date" required min={new Date().toISOString().split('T')[0]} />
+                  <input
+                    id="ride_date" name="ride_date" type="date" required
+                    min={new Date().toISOString().split('T')[0]}
+                    onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                  />
                 </div>
                 <div className="field">
                   <label htmlFor="ride_time">{t.field_time}</label>
-                  <input id="ride_time" name="ride_time" type="time" required />
+                  <input
+                    id="ride_time" name="ride_time" type="time" required
+                    onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                  />
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="field">
-                  <label htmlFor="passengers">{t.field_passengers}</label>
-                  <select id="passengers" name="passengers">
-                    <option value="1">{t.passengers_1}</option>
-                    <option value="2">{t.passengers_2}</option>
-                    <option value="3">{t.passengers_3}</option>
-                    <option value="4">{t.passengers_4}</option>
-                  </select>
-                </div>
-                <div className="field">
-                  <label htmlFor="payment_method">{t.field_payment}</label>
-                  <select id="payment_method" name="payment_method">
-                    <option value="stripe">{t.payment_stripe}</option>
-                    <option value="zelle">{t.payment_zelle}</option>
-                  </select>
-                </div>
+              <div className="field">
+                <label htmlFor="payment_method">{t.field_payment}</label>
+                <select id="payment_method" name="payment_method">
+                  <option value="stripe">{t.payment_stripe}</option>
+                  <option value="zelle">{t.payment_zelle}</option>
+                </select>
               </div>
 
               <div className="field">
@@ -317,21 +298,67 @@ export default function Home() {
             </form>
           )}
 
-          {/* Long trip CTA */}
           <div className="long-trip">
             <div className="long-trip-text">
               <strong>{t.long_trip_label}</strong>
               {t.long_trip_text}
             </div>
-            <a href="mailto:rides@yourdomain.com">{t.long_trip_cta}</a>
+            <a href="mailto:rides@justrideforyou.com">{t.long_trip_cta}</a>
           </div>
+
+          <BugReport />
         </div>
       </section>
 
       <footer>
         <div className="footer-logo">Private Rides</div>
-        <div>Sacramento, CA &nbsp;·&nbsp; {t.footer_note}</div>
+        <div>Sacramento, CA &nbsp;·&nbsp; justrideforyou.com</div>
       </footer>
     </>
+  )
+}
+
+function BugReport() {
+  const [open, setOpen] = useState(false)
+  const [text, setText] = useState('')
+  const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+
+  async function submit() {
+    if (!text.trim()) return
+    setSending(true)
+    try {
+      await fetch('/api/bug-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      })
+      setSent(true)
+      setText('')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  if (sent) return <div className="bug-sent">✓ Thanks for the report!</div>
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <button className="bug-toggle" onClick={() => setOpen(!open)}>
+        Found a bug? Let us know
+      </button>
+      {open && (
+        <div className="bug-box">
+          <textarea
+            placeholder="Describe what happened..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+          />
+          <button className="bug-submit" onClick={submit} disabled={sending}>
+            {sending ? '...' : 'Send report'}
+          </button>
+        </div>
+      )}
+    </div>
   )
 }
