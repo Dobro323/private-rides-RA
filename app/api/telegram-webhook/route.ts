@@ -5,7 +5,6 @@ import { emailPaymentOptions } from '@/lib/email'
 import Stripe from 'stripe'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' })
-console.log('Stripe key prefix:', process.env.STRIPE_SECRET_KEY?.slice(0, 12))
 
 async function processPayment(supabase: ReturnType<typeof createServiceClient>, chatId: string, rideId: string, price: number) {
   const { data: ride } = await supabase.from('rides').select('*').eq('id', rideId).single()
