@@ -57,7 +57,7 @@ export default function TimePicker({ id, name, required }: TimePickerProps) {
   const isEmpty = hour === null && minute === null
 
   return (
-    <div ref={ref} style={{ position: 'relative' }}>
+    <div ref={ref} style={{ position: 'relative', height: '100%' }}>
       <input type="hidden" id={id} name={name} value={value} required={required} />
       <div
         onClick={() => setOpen(!open)}
@@ -68,6 +68,8 @@ export default function TimePicker({ id, name, required }: TimePickerProps) {
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 14,
           fontWeight: 300,
+          height: '100%',
+          minHeight: 48,
           padding: '13px 15px',
           cursor: 'pointer',
           display: 'flex',
