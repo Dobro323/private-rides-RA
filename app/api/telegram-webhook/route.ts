@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
     }
     const { data: rides } = await supabase
       .from('rides').select('*').ilike('id', `${ridePrefix}%`)
-      .not('status', 'in', '("cancelled","completed")')
+      .not('status', 'in', `(cancelled,completed)`)
       .limit(1)
     const ride = rides?.[0]
     if (!ride) {
