@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/server'
+import AdminClient from './AdminClient'
 
 export default async function AdminPage({
   searchParams,
@@ -15,17 +16,18 @@ export default async function AdminPage({
   }
 
   const supabase = createServiceClient()
-  const { data: rides, error } = await supabase
+  const statusFilter = searchParams.status || 'all'
+
+  let query = supabase
     .from('rides')
     .select('*')
     .order('created_at', { ascending: false })
 
-  return (
-    <div style={{ fontFamily: 'monospace', padding: 40 }}>
-      <h2>Debug Admin</h2>
-      <p><b>Error:</b> {error ? JSON.stringify(error) : 'none'}</p>
-      <p><b>Rides count:</b> {rides?.length ?? 0}</p>
-      <pre style={{ fontSize: 12 }}>{JSON.stringify(rides, null, 2)}</pre>
-    </div>
-  )
+  if (statusFilter !== 'all') {
+    query = query.eq('status', statusFilter)
+  }
+
+  const { data: rides } = await query
+
+  return <AdminClient rides={rides || []} secret={searchParams.secret!} currentStatus={statusFilter} />
 }
