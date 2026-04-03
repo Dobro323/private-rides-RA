@@ -4,7 +4,6 @@ import { useState, useRef } from 'react'
 import { translations, Lang, T } from '@/lib/i18n'
 import TimePicker from '@/components/TimePicker'
 
-
 const LANGS: { code: Lang; label: string; flag: string }[] = [
   { code: 'en', label: 'EN', flag: '🇺🇸' },
   { code: 'es', label: 'ES', flag: '🇲🇽' },
@@ -16,17 +15,37 @@ export default function Home() {
   const [lang, setLang] = useState<Lang>('en')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const formRef = useRef<HTMLFormElement>(null)
 
   const t: T = translations[lang]
 
+  function validate(data: Record<string, FormDataEntryValue>) {
+    const e: Record<string, string> = {}
+    const r = (en: string, es: string, ru: string, zh: string) =>
+      lang === 'es' ? es : lang === 'ru' ? ru : lang === 'zh' ? zh : en
+    if (!data.client_name) e.client_name = r('Enter your name', 'Ingresa tu nombre', 'Введите имя', '请输入姓名')
+    if (!data.client_email) e.client_email = r('Enter your email', 'Ingresa tu email', 'Введите email', '请输入邮箱')
+    if (!data.pickup_address) e.pickup_address = r('Enter pickup address', 'Ingresa la dirección de recogida', 'Введите адрес подачи', '请输入上车地址')
+    if (!data.dropoff_address) e.dropoff_address = r('Enter destination', 'Ingresa el destino', 'Введите адрес назначения', '请输入目的地')
+    if (!data.ride_date) e.ride_date = r('Select a date', 'Selecciona la fecha', 'Выберите дату', '请选择日期')
+    if (!data.ride_time) e.ride_time = r('Select a time', 'Selecciona la hora', 'Выберите время', '请选择时间')
+    return e
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    setLoading(true)
-    setError('')
+    setErrors({})
     const form = e.currentTarget
     const data = Object.fromEntries(new FormData(form))
+
+    const validationErrors = validate(data)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    setLoading(true)
     try {
       const res = await fetch('/api/rides', {
         method: 'POST',
@@ -36,28 +55,13 @@ export default function Home() {
       if (!res.ok) throw new Error('Failed')
       setSubmitted(true)
     } catch {
-      setError('Something went wrong. Please try again.')
+      setErrors({ _general: lang === 'ru' ? 'Что-то пошло не так. Попробуйте ещё раз.' : lang === 'es' ? 'Algo salió mal. Intenta de nuevo.' : lang === 'zh' ? '出现错误，请重试。' : 'Something went wrong. Please try again.' })
     } finally {
       setLoading(false)
     }
   }
 
-  
-
-      function updateTime() {
-      const h = (document.getElementById('time_hour') as HTMLSelectElement)?.value
-      const m = (document.getElementById('time_min') as HTMLSelectElement)?.value
-      const ampm = (document.getElementById('time_ampm') as HTMLSelectElement)?.value
-      if (!h || !m) return
-      let hour = parseInt(h)
-      if (ampm === 'PM' && hour !== 12) hour += 12
-      if (ampm === 'AM' && hour === 12) hour = 0
-      const val = `${String(hour).padStart(2,'0')}:${m}`
-      const input = document.getElementById('ride_time') as HTMLInputElement
-      if (input) input.value = val
-    }
-    
-    return (
+  return (
     <>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -115,11 +119,13 @@ export default function Home() {
         input, textarea, select { background:var(--bg); border:1px solid var(--border); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; font-weight:300; padding:13px 15px; outline:none; transition:border-color 0.2s; width:100%; -webkit-appearance:none; border-radius:0; }
         input::placeholder, textarea::placeholder { color:var(--muted); }
         input:focus, textarea:focus, select:focus { border-color:var(--accent); }
+        input.invalid, textarea.invalid, select.invalid { border-color:#ef4444; }
         select option { background:#1a1a18; }
         textarea { resize:vertical; min-height:90px; }
-        input[type="date"], input[type="time"] { cursor:pointer; color-scheme:dark; }
-        input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { cursor:pointer; padding:4px; width:20px; height:20px; filter:invert(0.75) sepia(0.5) saturate(2) hue-rotate(10deg); opacity:0.8; }
-        input[type="date"]::-webkit-calendar-picker-indicator:hover, input[type="time"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
+        input[type="date"] { cursor:pointer; color-scheme:dark; }
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor:pointer; padding:4px; width:20px; height:20px; filter:invert(0.75) sepia(0.5) saturate(2) hue-rotate(10deg); opacity:0.8; }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity:1; }
+        .field-error { font-size:11px; color:#ef4444; margin-top:2px; }
         .form-submit { margin-top:6px; background:var(--accent); color:#0e0e0d; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; padding:17px; border:none; cursor:pointer; width:100%; transition:opacity 0.2s; }
         .form-submit:hover:not(:disabled) { opacity:0.9; }
         .form-submit:disabled { opacity:0.5; cursor:not-allowed; }
@@ -252,11 +258,15 @@ export default function Home() {
               <div className="form-row">
                 <div className="field">
                   <label htmlFor="client_name">{t.field_name}</label>
-                  <input id="client_name" name="client_name" type="text" required placeholder="Jane Smith" />
+                  <input id="client_name" name="client_name" type="text" placeholder="Jane Smith"
+                    className={errors.client_name ? 'invalid' : ''} />
+                  {errors.client_name && <span className="field-error">{errors.client_name}</span>}
                 </div>
                 <div className="field">
                   <label htmlFor="client_email">{t.field_email}</label>
-                  <input id="client_email" name="client_email" type="email" required placeholder="jane@email.com" />
+                  <input id="client_email" name="client_email" type="email" placeholder="jane@email.com"
+                    className={errors.client_email ? 'invalid' : ''} />
+                  {errors.client_email && <span className="field-error">{errors.client_email}</span>}
                 </div>
               </div>
 
@@ -267,29 +277,35 @@ export default function Home() {
 
               <div className="field">
                 <label htmlFor="pickup_address">{t.field_pickup}</label>
-                <input id="pickup_address" name="pickup_address" type="text" required placeholder="123 Main St, Sacramento" />
+                <input id="pickup_address" name="pickup_address" type="text" placeholder="123 Main St, Sacramento"
+                  className={errors.pickup_address ? 'invalid' : ''} />
+                {errors.pickup_address && <span className="field-error">{errors.pickup_address}</span>}
               </div>
 
               <div className="field">
                 <label htmlFor="dropoff_address">{t.field_dropoff}</label>
-                <input id="dropoff_address" name="dropoff_address" type="text" required placeholder="SMF Airport, Kaiser on Morse..." />
+                <input id="dropoff_address" name="dropoff_address" type="text" placeholder="SMF Airport, Kaiser on Morse..."
+                  className={errors.dropoff_address ? 'invalid' : ''} />
+                {errors.dropoff_address && <span className="field-error">{errors.dropoff_address}</span>}
               </div>
 
               <div className="form-row">
                 <div className="field">
                   <label htmlFor="ride_date">{t.field_date}</label>
                   <input
-                    id="ride_date" name="ride_date" type="date" required
+                    id="ride_date" name="ride_date" type="date"
                     min={new Date().toISOString().split('T')[0]}
                     onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                    className={errors.ride_date ? 'invalid' : ''}
                   />
+                  {errors.ride_date && <span className="field-error">{errors.ride_date}</span>}
                 </div>
-                
-                   <div className="field">
-                    <label htmlFor="ride_time">{t.field_time}</label>
-                    <TimePicker id="ride_time" name="ride_time" required />
-                  </div>
+                <div className="field">
+                  <label htmlFor="ride_time">{t.field_time}</label>
+                  <TimePicker id="ride_time" name="ride_time" invalid={!!errors.ride_time} />
+                  {errors.ride_time && <span className="field-error">{errors.ride_time}</span>}
                 </div>
+              </div>
 
               <div className="field">
                 <label htmlFor="payment_method">{t.field_payment}</label>
@@ -304,7 +320,7 @@ export default function Home() {
                 <textarea id="notes" name="notes" placeholder={t.field_notes_ph} />
               </div>
 
-              {error && <div className="form-error">{error}</div>}
+              {errors._general && <div className="form-error">{errors._general}</div>}
 
               <button type="submit" className="form-submit" disabled={loading}>
                 {loading ? '...' : t.submit}
