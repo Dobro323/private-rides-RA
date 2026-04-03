@@ -2,6 +2,8 @@
 
 import { useState, useRef } from 'react'
 import { translations, Lang, T } from '@/lib/i18n'
+import TimePicker from '@/components/TimePicker'
+
 
 const LANGS: { code: Lang; label: string; flag: string }[] = [
   { code: 'en', label: 'EN', flag: '🇺🇸' },
@@ -285,11 +287,7 @@ export default function Home() {
                 
                    <div className="field">
                     <label htmlFor="ride_time">{t.field_time}</label>
-                    <input
-                      id="ride_time" name="ride_time" type="time" required
-                      step="300"
-                      onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
-                    />
+                    <TimePicker id="ride_time" name="ride_time" required />
                   </div>
                 </div>
 
