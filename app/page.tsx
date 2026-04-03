@@ -40,7 +40,22 @@ export default function Home() {
     }
   }
 
-  return (
+  
+
+      function updateTime() {
+      const h = (document.getElementById('time_hour') as HTMLSelectElement)?.value
+      const m = (document.getElementById('time_min') as HTMLSelectElement)?.value
+      const ampm = (document.getElementById('time_ampm') as HTMLSelectElement)?.value
+      if (!h || !m) return
+      let hour = parseInt(h)
+      if (ampm === 'PM' && hour !== 12) hour += 12
+      if (ampm === 'AM' && hour === 12) hour = 0
+      const val = `${String(hour).padStart(2,'0')}:${m}`
+      const input = document.getElementById('ride_time') as HTMLInputElement
+      if (input) input.value = val
+    }
+    
+    return (
     <>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -267,24 +282,28 @@ export default function Home() {
                     onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
                   />
                 </div>
+                
                 <div className="field">
-                  <label htmlFor="ride_time">{t.field_time}</label>
-                  <select id="ride_time" name="ride_time" required>
-                    <option value="">-- Select time --</option>
-                    {Array.from({ length: 24 * 12 }, (_, i) => {
-                      const h = Math.floor(i / 12)
-                      const m = (i % 12) * 5
-                      const hh = String(h).padStart(2, '0')
-                      const mm = String(m).padStart(2, '0')
-                      const ampm = h < 12 ? 'AM' : 'PM'
-                      const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h
-                      return (
-                        <option key={`${hh}:${mm}`} value={`${hh}:${mm}`}>
-                          {`${h12}:${mm} ${ampm}`}
-                        </option>
-                      )
-                    })}
-                  </select>
+                  <label>{t.field_time}</label>
+                  <input type="hidden" id="ride_time" name="ride_time" required />
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <select id="time_hour" style={{ flex: 1 }} onChange={() => updateTime()}>
+                      <option value="">HH</option>
+                      {[12,1,2,3,4,5,6,7,8,9,10,11].map(h => (
+                        <option key={h} value={String(h)}>{String(h).padStart(2,'0')}</option>
+                      ))}
+                    </select>
+                    <select id="time_min" style={{ flex: 1 }} onChange={() => updateTime()}>
+                      <option value="">MM</option>
+                      {['00','05','10','15','20','25','30','35','40','45','50','55'].map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                    <select id="time_ampm" style={{ flex: 1 }} onChange={() => updateTime()}>
+                      <option value="AM">AM</option>
+                      <option value="PM">PM</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
