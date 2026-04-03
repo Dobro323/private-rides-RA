@@ -1,9 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/server'
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
-import AdminClient from './AdminClient'
 
-// Simple secret-based protection (add proper auth later)
 export default async function AdminPage({
   searchParams,
 }: {
@@ -19,18 +15,17 @@ export default async function AdminPage({
   }
 
   const supabase = createServiceClient()
-  const statusFilter = searchParams.status || 'all'
-
-  let query = supabase
+  const { data: rides, error } = await supabase
     .from('rides')
-    .select('*, drivers(name)')
+    .select('*')
     .order('created_at', { ascending: false })
 
-  if (statusFilter !== 'all') {
-    query = query.eq('status', statusFilter)
-  }
-
-  const { data: rides } = await query
-
-  return <AdminClient rides={rides || []} secret={searchParams.secret!} currentStatus={statusFilter} />
+  return (
+    <div style={{ fontFamily: 'monospace', padding: 40 }}>
+      <h2>Debug Admin</h2>
+      <p><b>Error:</b> {error ? JSON.stringify(error) : 'none'}</p>
+      <p><b>Rides count:</b> {rides?.length ?? 0}</p>
+      <pre style={{ fontSize: 12 }}>{JSON.stringify(rides, null, 2)}</pre>
+    </div>
+  )
 }
