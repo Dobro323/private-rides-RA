@@ -63,7 +63,7 @@ ${ride.notes ? `📝 <i>${ride.notes}</i>` : ''}
         { text: '✅ Approve', callback_data: `approve:${ride.id}` },
         { text: '❌ Decline', callback_data: `decline:${ride.id}` },
       ],
-      [{ text: '🔗 Open in Admin', url: `${appUrl}/admin` }],
+      [{ text: '🔗 Open in Admin', url: `${appUrl}/admin?secret=${process.env.ADMIN_SECRET}` },],
     ],
   })
 }
