@@ -11,7 +11,10 @@ export async function POST(req: NextRequest) {
     }
     const supabase = createServiceClient()
     const { data: ride, error: rideError } = await supabase
-      .from('rides').select('*, drivers(name)').eq('id', rideId).single()
+    .from('rides')
+    .select('*')  // убери drivers(name)
+    .eq('id', rideId)
+    .single()
     
     console.log('ride:', ride, 'error:', rideError)
     if (!ride) return NextResponse.json({ error: 'Ride not found' }, { status: 404 })
