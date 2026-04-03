@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     if (!rideId) return new NextResponse('ok')
 
-    const { data: ride } = await supabase.from('rides').select('*, drivers(name)').eq('id', rideId).single()
+    const { data: ride } = await supabase.from('rides').select('*').eq('id', rideId).single()
     if (!ride) return new NextResponse('ok')
 
     // Update to scheduled
@@ -46,8 +46,7 @@ export async function POST(req: NextRequest) {
       dropoff: ride.dropoff_address,
       date: ride.ride_date,
       time: ride.ride_time,
-      price: ride.price_usd,
-      driverName: ride.drivers?.name,
+      price: ride.price_usd,      
     })
 
     // Notify admin via Telegram
