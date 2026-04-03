@@ -283,29 +283,15 @@ export default function Home() {
                   />
                 </div>
                 
-                <div className="field">
-                  <label>{t.field_time}</label>
-                  <input type="hidden" id="ride_time" name="ride_time" />
-                  <div style={{ display: 'flex', border: '1px solid var(--border)', background: 'var(--bg)' }}>
-                    <select id="time_hour" style={{ flex: 1, border: 'none', borderRight: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', padding: '13px 10px', outline: 'none', textAlign: 'center' }} onChange={() => updateTime()}>
-                      <option value="">HH</option>
-                      {[12,1,2,3,4,5,6,7,8,9,10,11].map(h => (
-                        <option key={h} value={String(h)}>{String(h).padStart(2,'0')}</option>
-                      ))}
-                    </select>
-                    <select id="time_min" style={{ flex: 1, border: 'none', borderRight: '1px solid var(--border)', background: 'transparent', color: 'var(--text)', padding: '13px 10px', outline: 'none', textAlign: 'center' }} onChange={() => updateTime()}>
-                      <option value="">MM</option>
-                      {['00','05','10','15','20','25','30','35','40','45','50','55'].map(m => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
-                    <select id="time_ampm" style={{ flex: '0 0 70px', border: 'none', background: 'transparent', color: 'var(--text)', padding: '13px 10px', outline: 'none', textAlign: 'center' }} onChange={() => updateTime()}>
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
+                   <div className="field">
+                    <label htmlFor="ride_time">{t.field_time}</label>
+                    <input
+                      id="ride_time" name="ride_time" type="time" required
+                      step="300"
+                      onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
+                    />
                   </div>
                 </div>
-              </div>
 
               <div className="field">
                 <label htmlFor="payment_method">{t.field_payment}</label>
