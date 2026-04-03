@@ -269,11 +269,22 @@ export default function Home() {
                 </div>
                 <div className="field">
                   <label htmlFor="ride_time">{t.field_time}</label>
-                  <input
-                    id="ride_time" name="ride_time" type="time" required
-                    step="300"
-                    onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
-                  />
+                  <select id="ride_time" name="ride_time" required>
+                    <option value="">-- Select time --</option>
+                    {Array.from({ length: 24 * 12 }, (_, i) => {
+                      const h = Math.floor(i / 12)
+                      const m = (i % 12) * 5
+                      const hh = String(h).padStart(2, '0')
+                      const mm = String(m).padStart(2, '0')
+                      const ampm = h < 12 ? 'AM' : 'PM'
+                      const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h
+                      return (
+                        <option key={`${hh}:${mm}`} value={`${hh}:${mm}`}>
+                          {`${h12}:${mm} ${ampm}`}
+                        </option>
+                      )
+                    })}
+                  </select>
                 </div>
               </div>
 
