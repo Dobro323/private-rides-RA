@@ -156,7 +156,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
     const { data: rides } = await supabase
-      .from('rides').select('*').ilike('id', `${ridePrefix}%`).eq('status', 'approved').limit(1)
+      .from('rides').select('*').ilike('id', `${ridePrefix}%`)
+      .not('status', 'in', '("cancelled","completed")')
+      .limit(1)
     const ride = rides?.[0]
     if (!ride) {
       await sendTelegramMessage(chatId, `⚠️ No approved ride found with ID <code>${ridePrefix}</code>`)
