@@ -127,8 +127,7 @@ export async function POST(req: NextRequest) {
     if (action === 'customprice') {
       await sendTelegramMessage(
         chatId,
-        `Enter the price for ride <code>${rideId.slice(0, 8)}</code>:\n\n` +
-        `Reply with: <code>/price ${rideId.slice(0, 8)} 50</code>`
+        `Enter the price:\n\n<code>/price ${rideId} 50</code>\n\nReplace <code>50</code> with actual price.`
       )
       return NextResponse.json({ ok: true })
     }
@@ -149,21 +148,16 @@ export async function POST(req: NextRequest) {
       await sendTelegramMessage(chatId, '⚠️ Usage: <code>/price &lt;ride_id&gt; &lt;amount&gt;</code>')
       return NextResponse.json({ ok: true })
     }
-    const ridePrefix = parts[1]
+    const rideId = parts[1]
     const price = parseFloat(parts[2])
     if (isNaN(price) || price <= 0) {
       await sendTelegramMessage(chatId, '⚠️ Invalid price.')
       return NextResponse.json({ ok: true })
     }
-    const { data: rides } = await supabase
-      .from('rides').select('*')
-      .filter('id::text', 'ilike', `${ridePrefix}%`)
-      .neq('status', 'cancelled')
-      .neq('status', 'completed')
-      .limit(1)
-    const ride = rides?.[0]
+    const { data: ride } = await supabase
+      .from('rides').select('*').eq('id', rideId).single()
     if (!ride) {
-      await sendTelegramMessage(chatId, `⚠️ No approved ride found with ID <code>${ridePrefix}</code>`)
+      await sendTelegramMessage(chatId, `⚠️ Ride not found: <code>${rideId}</code>`)
       return NextResponse.json({ ok: true })
     }
     await processPayment(supabase, chatId, ride.id, price)
