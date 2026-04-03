@@ -22,11 +22,14 @@ async function processPayment(supabase: ReturnType<typeof createServiceClient>, 
         unit_amount: Math.round(price * 100),
         product_data: { name: `Private Ride — ${ride.ride_date} ${ride.ride_time}` },
       })
-      const paymentLink = await stripe.paymentLinks.create({
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
         line_items: [{ price: priceObj.id, quantity: 1 }],
         metadata: { ride_id: ride.id },
+        success_url: `https://justrideforyou.com/success`,
+        cancel_url: `https://justrideforyou.com`,
       })
-      stripeLink = paymentLink.url
+      stripeLink = session.url!
     } catch (err) {
       console.error('Stripe error:', err)
       await sendTelegramMessage(chatId, '⚠️ Stripe link failed. Sending Zelle instructions.')
