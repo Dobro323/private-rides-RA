@@ -46,6 +46,7 @@ async function processPayment(supabase: ReturnType<typeof createServiceClient>, 
     paymentMethod: ride.payment_method,
     stripeLink,
     rideId: ride.id,
+    lang: ride.lang,
   })
 
   await sendTelegramMessage(
