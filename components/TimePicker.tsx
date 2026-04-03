@@ -6,9 +6,10 @@ interface TimePickerProps {
   id: string
   name: string
   required?: boolean
+  invalid?: boolean
 }
 
-export default function TimePicker({ id, name, required }: TimePickerProps) {
+export default function TimePicker({ id, name, required, invalid }: TimePickerProps) {
   const [open, setOpen] = useState(false)
   const [hour, setHour] = useState<number | null>(null)
   const [minute, setMinute] = useState<number | null>(null)
@@ -38,7 +39,6 @@ export default function TimePicker({ id, name, required }: TimePickerProps) {
     if (ap === 'PM' && h !== 12) h24 = h + 12
     if (ap === 'AM' && h === 12) h24 = 0
     setValue(`${String(h24).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
-    setOpen(false)
   }
 
   function selectHour(h: number) {
@@ -57,19 +57,17 @@ export default function TimePicker({ id, name, required }: TimePickerProps) {
   const isEmpty = hour === null && minute === null
 
   return (
-    <div ref={ref} style={{ position: 'relative', height: '100%' }}>
+    <div ref={ref} style={{ position: 'relative' }}>
       <input type="hidden" id={id} name={name} value={value} required={required} />
       <div
         onClick={() => setOpen(!open)}
         style={{
           background: 'var(--bg)',
-          border: `1px solid ${open ? 'var(--accent)' : 'var(--border)'}`,
+          border: `1px solid ${open ? 'var(--accent)' : invalid ? '#ef4444' : 'var(--border)'}`,
           color: isEmpty ? 'var(--muted)' : 'var(--text)',
           fontFamily: "'DM Sans', sans-serif",
           fontSize: 14,
           fontWeight: 300,
-          height: '100%',
-          minHeight: 48,
           padding: '13px 15px',
           cursor: 'pointer',
           display: 'flex',
