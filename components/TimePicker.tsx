@@ -17,7 +17,7 @@ export default function TimePicker({ id, name, required }: TimePickerProps) {
   const [value, setValue] = useState('')
   const ref = useRef<HTMLDivElement>(null)
 
-  const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+  const hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
   const minutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
 
   useEffect(() => {
@@ -38,6 +38,7 @@ export default function TimePicker({ id, name, required }: TimePickerProps) {
     if (ap === 'PM' && h !== 12) h24 = h + 12
     if (ap === 'AM' && h === 12) h24 = 0
     setValue(`${String(h24).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
+    setOpen(false)
   }
 
   function selectHour(h: number) {
