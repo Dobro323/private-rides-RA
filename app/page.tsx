@@ -271,6 +271,7 @@ export default function Home() {
                   <label htmlFor="ride_time">{t.field_time}</label>
                   <input
                     id="ride_time" name="ride_time" type="time" required
+                    step="300"
                     onClick={(e) => (e.target as HTMLInputElement).showPicker?.()}
                   />
                 </div>
